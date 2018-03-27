@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.AdminMapper">	
+
+
+
+<resultMap type="Admin" id="AdminMap">
+    <id property="billard_id" column="billard_id"/>
+    <result property="username" column="admin_login_name"/>
+    <result property="billard_name" column="billard_name"/>
+    <result property="synopsis" column="synopsis"/>
+    <result property="admin_name" column="admin_name"/>
+    <result property="admin_tel" column="admin_tel"/>
+    <result property="billard_address" column="billard_address"/>
+    
+</resultMap>
+	<select id="checkLogin" parameterType="Admin" resultMap="AdminMap">
+		
+		select * from  administrator where admin_login_name = #{username} and password= #{password}
+	</select>
+	
+	<select id="checkByTel" parameterType="String" resultType="Members">
+		
+		select * from  members where member_tel = #{member_tel}
+	</select>
+	
+	<insert id="regist" parameterType="Members" >
+	<!-- <selectKey keyProperty="rkid" resultType="String" order="BEFORE">
+			select
+			'No.' SEQ_MEMBER.nextval from dual
+		</selectKey> -->
+		
+			insert into members(billard_id,member_name,member_tel,password,integrate,balance,member_idcard)
+			values('2',#{member_name},#{member_tel},#{password},
+			#{balance},#{balance},#{member_idcard})
+	</insert>
+	
+	<select id="lock_ckeck" parameterType="String" resultType="Admin">
+		
+		select * from  administrator where billard_id = #{0} and lock_password = #{1}
+	</select>
+	
+	
+	<select id="membersBycondition" parameterType="Members" resultType="Members">
+		
+		select * from  members 
+		
+		<where>
+			<if test="member_name !=null and member_name!='' ">  
+				member_name LIKE '%${member_name}%'
+			</if>
+			<if test="member_tel !=null and member_tel!='' ">
+			 and member_tel LIKE '%${member_tel}%'
+			</if>
+			<if test="grade !=null and grade!='' ">
+			 and grade LIKE '%${grade}%'
+			</if>
+		</where>
+	</select>
+	
+	
+	<!-- 分页SQL语句 -->  
+<select id="memberpage"  resultType="Members">  
+  SELECT *
+  FROM (SELECT A.*
+          FROM (SELECT * FROM members
+          <where>
+			<if test="member_name !=null and member_name!='' ">  
+				member_name LIKE '%${member_name}%'
+			</if>
+			<if test="member_tel !=null and member_tel!='' ">
+			 and member_tel LIKE '%${member_tel}%'
+			</if>
+			<if test="grade !=null and grade!='' ">
+			 and grade LIKE '%${grade}%'
+			</if>
+		</where>
+		
+		) A
+        
+)b
+
+   
+ 
+
+
+  
+</select> 
+
+			<select id="getReserve"  resultType="Useinfo">
+
+			  select u.use_id,u.billard_id,u.use_start,u.user_name,b.price from 
+  
+  			(select * from useinfo  where use_status = '1' 
+      
+      and use_start &lt; now()u
+      
+      left join billiards b
+      
+      on u.billard_id = b.billiard_id
+
+			
+
+				</select>
+
+		<update id="upreserve">
+			
+			update reserve set reserve_status = '2' where  reserve_status = '1' and
+			reserve_end&lt;=now()
+		</update>
+		
+		<insert id="addannoun">
+		
+			insert into announcement(announce_id,billard_id,announce_title,announce_date,announce_content)
+			values(0,#{billard_id},#{announ_title},now(),#{announ_content})
+		</insert>
+		
+		
+		<update id="uplockpass" >
+			
+			update ADMINISTRATOR set lock_password = #{lock_password}  where  billard_id = #{billard_id} and
+			
+			admin_name = #{admin_name} and admin_tel = #{admin_tel}
+		</update>
+		
+		
+		
+		
+		
+		
+
+<resultMap type="Reserve" id="ReserveResult">
+    
+    <result property="reserve_start" column="reserve_start"/>
+</resultMap>
+
+
+<resultMap type="Billiards" id="billiardWithReserveMap">
+    <id property="billiard_id" column="billiard_id"/>
+    <result property="price" column="price"/>
+    <result property="location" column="location"/>
+    <association property="reserve" javaType="Reserve" resultMap="ReserveResult"/>
+</resultMap>
+	
+	
+	
+	<select id="getNoUseinfo" resultMap="billiardWithReserveMap">
+select  b.billiard_id,b.price,b.location,r.reserve_start from
+(select * from billiards where billiard_id not in(
+select billard_id from useinfo where use_status ='1' and
+use_start &lt;now()
+union
+select billiard_id from accounts where account_status ='0' and
+account_start &lt;now()
+union
+select billiard_id from accounts where accounts.account_status='1' and
+accounts.account_end &gt;now()
+and accounts.account_start &lt;now())) b
+left join ( select  distinct re.billard_id,min(a.reserve_start) as reserve_start from reserve re
+ left join (select  distinct billard_id,reserve_start from reserve 
+ where reserve_status='1' and
+reserve_start &gt; now() )a
+ on a.billard_id = re.billard_id
+ group by re.billard_id)r
+on r.billard_id = b.billiard_id
+
+	</select>
+	
+	
+	
+<resultMap type="Members" id="MembersResult">
+    
+    <result property="balance" column="balance"/>
+    <result property="grade" column="grade"/>
+</resultMap>
+
+
+<resultMap type="Accounts" id="AccountWithMemBilMap">
+    <id property="account_id" column="account_id"/>
+    <result property="member_id" column="member_id"/>
+    <result property="billiard_id" column="billiard_id"/>
+    <result property="account_start" column="account_start"/>
+    <result property="account_end" column="account_end"/>
+    <result property="price" column="price"/>
+    <result property="discount" column="discount"/>
+    <association property="member" javaType="Members" resultMap="MembersResult"/>
+</resultMap>
+	
+	
+	<select id="getMemUseinfo" resultMap="AccountWithMemBilMap">
+			
+			
+select a.account_id,a.member_id,a.billiard_id,a.account_start,a.account_end,b.price,m.balance,m.grade,p.discount from accounts a 
+
+left join billiards b
+
+on b.billiard_id =  a.billiard_id
+
+left join members m
+
+on m.member_id =  a.member_id
+
+left join preferent p
+
+on p.member_grade=  m.grade
+
+where account_status='1' and
+
+account_end &gt;now()
+
+
+and account_start &lt;now()
+
+
+union 
+
+
+select a.account_id,a.member_id,a.billiard_id,a.account_start,a.account_end,b.price,m.balance,m.grade,p.discount from accounts a 
+
+left join billiards b
+
+on b.billiard_id =  a.billiard_id
+
+left join members m
+
+on m.member_id =  a.member_id
+
+left join preferent p
+
+on p.member_grade=  m.grade
+
+where account_status='0' and
+
+account_start &lt;now()
+
+
+	
+	</select>
+	
+	
+	
+	
+	<select id="getAccounts" resultType="Accounts">
+	
+	select *  from   accounts   
+	
+	 <where>
+	 		
+			account_status = '2'  
+			<if test="member_tel !=null and member_tel!='' ">
+			 and member_id = #{member_tel}
+			</if>
+			<if test="date !=null and date!='' ">
+			 and da(account_start,'yyyymmdd') LIKE '%${date}%'
+			</if>
+		</where>
+	
+	
+	union
+	
+	select *  from   accounts   
+	
+	 <where>
+	 		
+			account_status = '3'  
+			<if test="member_tel !=null and member_tel!='' ">
+			 and member_id = #{member_tel}
+			</if>
+			<if test="date !=null and date!='' ">
+			 and to_char(account_start,'yyyymmdd') LIKE '%${date}%'
+			</if>
+		</where>
+ 
+			
+	</select>
+	
+	
+	
+		
+	<select id="getAccountsBybillid" resultType="Accounts">
+	
+	select *  from   accounts   
+	
+	 <where>
+			account_status = '2' 
+			<if test="member_tel !=null and member_tel!='' ">
+			 and member_id = #{member_tel}
+			</if>
+			<if test="date !=null and date!='' ">
+			 and to_char(account_start,'yyyymmdd') LIKE '%${date}%'
+			</if>
+			
+			<if test="billiard_id !=null and billiard_id!='' ">
+			 and  billiard_id = #{billiard_id}
+			</if>
+		</where>
+	
+ 
+			
+	</select>
+	
+	
+	
+	
+	<delete id="deleteById" >
+	
+		delete from members where member_id in 
+		 <foreach collection="items" item="item" index="index" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+	</delete>
+</mapper>

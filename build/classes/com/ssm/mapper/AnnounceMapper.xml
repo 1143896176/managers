@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.AnnounceMapper">	
+
+	<select id="getAnnoun" resultType="Announcement">
+		
+		select * from announcement 
+	</select>
+	
+	<insert id="adminBill">
+	
+		
+		insert into billiards(origin,price,location)
+			values(#{origin},#{price},#{location})
+	</insert>
+	
+	<select id="getBilliardAccounts" resultType="BillardAccounts">
+	
+  
+select b.billiard_id,m.member_price as member_price,u.user_price as user_price from 
+(select distinct billiard_id from accounts where account_status = 2 or account_status=3)b
+
+left join 
+
+(select billiard_id,sum(price) as member_price from accounts where account_status = 2
+group by billiard_id)m
+
+on b.billiard_id = m.billiard_id
+
+left join
+
+(select billiard_id,sum(price) as user_price from accounts where account_status = 3
+group by billiard_id)u
+on  b.billiard_id = u.billiard_id
+	</select>
+</mapper>

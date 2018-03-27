@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="  
+           http://www.springframework.org/schema/beans  
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
+           http://www.springframework.org/schema/aop  
+           http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/context  
+           http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+           <context:property-placeholder location="classpath:db.properties"/>
+	<!-- 配置数据源 -->
+	<bean id="dataSource"
+		class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		 <property name="maxPoolSize" value="${c3p0.pool.size.max}" />
+        <property name="minPoolSize" value="${c3p0.pool.size.min}" />
+         <property name="initialPoolSize" value="${c3p0.pool.size.ini}" />
+         <property name="acquireIncrement" value="${c3p0.pool.size.increment}" />
+	</bean>
+
+
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:MyBatisConf.xml" />
+		<!-- <property name="typeAliasesPackage" value="com.tiantian.ckeditor.model" 
+			/> -->
+	</bean>
+
+	   <bean id="adminMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">  
+       <property name="mapperInterface"  
+           value="com.ssm.mapper.AdminMapper" />  
+       <property name="sqlSessionFactory" ref="sqlSessionFactory" />  
+    </bean>  
+    
+     <bean id="messagesMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">  
+       <property name="mapperInterface"  
+           value="com.ssm.mapper.MessagesMapper" />  
+       <property name="sqlSessionFactory" ref="sqlSessionFactory" />  
+    </bean>
+    
+     <bean id="reserveMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">  
+       <property name="mapperInterface"  
+           value="com.ssm.mapper.ReserveMapper" />  
+       <property name="sqlSessionFactory" ref="sqlSessionFactory" />  
+    </bean>
+    
+     <bean id="announceMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">  
+       <property name="mapperInterface"  
+           value="com.ssm.mapper.AnnounceMapper" />  
+       <property name="sqlSessionFactory" ref="sqlSessionFactory" />  
+    </bean>
+    
+      <bean id="accountMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">  
+       <property name="mapperInterface"  
+           value="com.ssm.mapper.AccountMapper" />  
+       <property name="sqlSessionFactory" ref="sqlSessionFactory" />  
+    </bean>
+    
+	<!-- 自动扫描注解的bean -->
+	<context:component-scan base-package="com.ssm.service" /> 
+
+</beans>

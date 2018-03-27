@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.AccountMapper">	
+
+		<resultMap id="accountMap" type="Accounts">
+  			<result property="member_id" column="member_id"/>
+  			<result property="price" column="price"/>
+		</resultMap>
+	
+	<select id="getMemberInfo"  resultMap="accountMap">
+		
+		 select member_id,price  from accounts where  account_status='1' 
+	
+	</select>
+	
+	<update id="accountMember" parameterType="Accounts">
+	
+		update members set balance= balance - #{balance}  
+		
+		 where member_id = #{member_id}
+		 
+	</update>
+	
+	
+	<update id="upAccountStatus">
+	
+		update accounts set account_status= '2'  where  account_status='1' 
+		 
+	</update>
+</mapper>

@@ -1,0 +1,7 @@
+.style_maskFrame {
+    background-color:#C7EDCC;
+    position:absolute;
+    top:0px;
+    left:0px;
+    filter:Alpha(Opacity=60);
+}

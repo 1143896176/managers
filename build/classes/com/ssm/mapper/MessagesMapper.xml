@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.MessagesMapper">	
+
+	<resultMap id="IntegrateMap" type="Members">
+  			<result property="member_id" column="member_id"/>
+  			<result property="integrate" column="integrate"/>
+		</resultMap>
+
+	<select id="selectByStatus" resultType="Messages">
+		
+		select * from messages where message_status = 1
+	</select>
+	
+	<select id="selectByStatus2" resultType="Messages">
+		
+		select * from messages where message_status = 2
+	</select>
+	
+	<select id="selectPreference" resultType="Double">
+		
+		select discount from PREFERENT where member_grade = 1
+	</select>
+	
+	<select id="selectPreference1" parameterType="Integer" resultType="Double">
+		
+		select discount from PREFERENT where member_grade = #{0}
+	</select>
+	
+	<select id="selectIntegrate"  resultMap="IntegrateMap">
+		
+		select member_id,integrate from members 
+	</select>
+	
+	<update id="upGrade" >
+	
+		update members set grade = #{grade} where member_id = #{member_id}
+	</update>
+	
+	<update id="upPreference" >
+	
+		update preferent set discount = #{discount} where member_grade = #{member_grade}
+	</update>
+	
+	<update id="upMessageStatus" >
+	
+		update messages set message_status = 2 where message_id = #{message_id}
+	</update>
+</mapper>

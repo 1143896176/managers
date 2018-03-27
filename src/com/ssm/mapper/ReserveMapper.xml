@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ssm.mapper.ReserveMapper">	
+
+	<select id="selectByStatus" resultType="Reserve">
+		
+		select * from reserve where reserve_status = 1
+		
+	</select>
+	
+	<select id="getBilliardId" resultType="int">
+	
+		select billiard_id from billiards
+	</select>
+	
+	<select id="getReserve" resultType="Reserve">
+	
+		select * from Reserve where reserve_status = #{reserve_status}
+	</select>
+	
+	<update id="upReserve">
+	
+	update reserve set reserve_status = '2' where reserve_id = #{reserve_id}
+	</update>
+	
+	<update id="upReservesuccess">
+	
+	update reserve set reserve_status = '3' where reserve_id = #{reserve_id}
+	</update>
+	
+	<select id="getReserveinfo" resultType="Reserve">
+	
+		select * from reserve where reserve_id = #{reserve_id}
+	</select>
+	
+	<insert id="addAccount" >
+	
+		insert into accounts(account_id,member_id,billiard_id,account_start,account_end,duration,price)
+		
+		values(#{account_id},#{member_id},#{billiard_id},#{account_start},
+		
+		#{account_end},#{duration},#{price})
+		F
+	</insert>
+	
+	
+	<select id="getPrice" parameterType="Integer" resultType="Double">
+	
+		select price from billiards where billiard_id = #{billiard_id}
+	
+	</select>
+	
+	<select id="selectBalance" parameterType="String" resultType="Members">
+	
+		select member_name,grade,balance from members where member_id = #{0}
+	
+	</select>
+	
+	<select id="getDiscount" parameterType="Integer" resultType="Double">
+	
+		select discount from preferent where member_grade = #{0}
+	
+	</select>
+	
+	
+	
+	<insert id="beginUse">
+	
+			insert into useinfo(use_id,billard_id,use_start,user_name) values
+			
+			(#{use_id},#{0},now(),#{1})
+	
+	</insert>
+	
+	<insert id="MembeginUse">
+	
+			insert into accounts(account_id,billiard_id,account_start,member_id,account_status) values
+			
+			(#{account_id},#{0},now(),#{1},0)
+	
+	</insert>
+	
+	<select id="getMem_name" resultType="String">
+	
+		select member_name from members where member_id= #{0}
+	</select>
+	
+	
+	<update id="upUseinfo">
+	
+		update useinfo set use_status = '2'
+		
+		where use_id = #{0}	
+	</update>
+	
+	<insert id="insertAccount">
+	
+		insert into accounts(account_id,member_id,billiard_id,account_start,account_end,duration,price,account_status)
+		
+		values(#{account_id},#{user_name},#{billard_id},#{account_start},
+		
+		now(),#{duration},#{price},3)
+	</insert>
+	
+	
+	<select id="getUseruse" resultType="Useinfo">
+	
+		select u.use_id,u.billard_id,u.use_start,u.user_name,b.price from 
+  
+  			(select * from useinfo  where use_status = '1' 
+      
+           and use_start &lt; now())u
+      
+           left join billiards b
+      
+           on u.billard_id = b.billiard_id
+      
+            where use_id = #{use_id}	
+	</select>
+	
+	
+	
+	
+	<resultMap type="Members" id="membersResult">
+    
+    <result property="balance" column="balance"/>
+    <result property="grade" column="grade"/>
+</resultMap>
+
+
+<resultMap type="Accounts" id="AccountWithMembilMap">
+    <id property="account_id" column="account_id"/>
+    <result property="member_id" column="member_id"/>
+    <result property="billiard_id" column="billiard_id"/>
+    <result property="account_start" column="account_start"/>
+    <result property="account_end" column="account_end"/>
+    <result property="price" column="price"/>
+    <result property="discount" column="discount"/>
+    <association property="member" javaType="Members" resultMap="membersResult"/>
+</resultMap>
+	
+	
+	<select id="getMemuse" resultMap="AccountWithMembilMap">
+			
+			select c.account_id,c.member_id,c.billiard_id,c.account_start,c.account_end,c.price,c.balance,c.grade,c.discount
+			
+			from
+          (select a.account_id,a.member_id,a.billiard_id,a.account_start,a.account_end,b.price,m.balance,m.grade,p.discount from accounts a 
+
+          left join billiards b
+
+           on b.billiard_id =  a.billiard_id
+
+            left join members m
+
+           on m.member_id =  a.member_id
+
+           left join preferent p
+
+          on p.member_grade=  m.grade
+
+         where account_status='1' and
+
+         account_end &gt;now()
+
+
+        and account_start &lt;now()
+
+
+         union 
+
+
+         select a.account_id,a.member_id,a.billiard_id,a.account_start,a.account_end,b.price,m.balance,m.grade,p.discount from accounts a 
+
+         left join billiards b
+
+         on b.billiard_id =  a.billiard_id
+
+          left join members m
+
+          on m.member_id =  a.member_id
+
+         left join preferent p
+
+         on p.member_grade=  m.grade
+
+           where account_status='0' and
+
+            account_start &lt;now()c
+
+             where c.account_id = #{account_id}
+
+
+	
+	</select>
+	
+	<update id="upAccountsInfo">
+	
+	update accounts set account_end=now(),
+	
+	duration=#{duration},price=#{price},account_status='2' where account_id = #{account_id}
+	
+	
+	</update>
+	
+	
+	<select id="getReservePage" resultType="Reserve">
+	
+	 SELECT *
+  FROM (SELECT A.*
+          FROM (SELECT * FROM Reserve
+         where reserve_status = #{reserve_status}
+		
+		) A
+          
+
+)B
+
+		
+	</select>
+</mapper>
