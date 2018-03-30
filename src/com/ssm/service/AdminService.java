@@ -7,7 +7,11 @@ import com.ssm.model.Admin;
 import com.ssm.model.Billiards;
 import com.ssm.model.Members;
 import com.ssm.model.Useinfo;
-
+/**
+ * 更改了数据类型将date加入
+ * @author Administrator
+ *
+ */
 public interface AdminService {
 
 	public Admin checkLogin(Admin admin);
@@ -28,9 +32,9 @@ public interface AdminService {
 	 
 	 public List<Billiards> getNoUseinfo();
 	 
-	 public List<Accounts> getAccounts(String member_tel,String YYYY,String MM,String DD);
+	 public List<Accounts> getAccounts(String member_tel,String date);
 	 
-	 public List<Accounts> getAccountsBybillid(String member_tel,String YYYY,String MM,String DD,Integer billiard_id);
+	 public List<Accounts> getAccountsBybillid(String member_tel,String date,Integer billiard_id);
 	 
 	 public List<Accounts> getMemUseinfo();
 	 

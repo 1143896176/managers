@@ -94,7 +94,7 @@
   
   			(select * from useinfo  where use_status = '1' 
       
-      and use_start &lt; now()u
+      and use_start &lt; now())u
       
       left join billiards b
       
@@ -252,7 +252,7 @@ account_start &lt;now()
 			 and member_id = #{member_tel}
 			</if>
 			<if test="date !=null and date!='' ">
-			 and da(account_start,'yyyymmdd') LIKE '%${date}%'
+			 and account_start LIKE '%${date}%'
 			</if>
 		</where>
 	
@@ -268,7 +268,7 @@ account_start &lt;now()
 			 and member_id = #{member_tel}
 			</if>
 			<if test="date !=null and date!='' ">
-			 and to_char(account_start,'yyyymmdd') LIKE '%${date}%'
+			 and account_start LIKE '%${date}%'
 			</if>
 		</where>
  
@@ -288,7 +288,7 @@ account_start &lt;now()
 			 and member_id = #{member_tel}
 			</if>
 			<if test="date !=null and date!='' ">
-			 and to_char(account_start,'yyyymmdd') LIKE '%${date}%'
+			 and account_start LIKE '%${date}%'
 			</if>
 			
 			<if test="billiard_id !=null and billiard_id!='' ">

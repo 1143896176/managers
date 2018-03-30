@@ -10,7 +10,9 @@
 	
 	<select id="getMemberInfo"  resultMap="accountMap">
 		
-		 select member_id,price  from accounts where  account_status='1' 
+		  select member_id,price  from accounts where  account_status='1' and
+    
+     account_end&lt;now()
 	
 	</select>
 	
@@ -25,7 +27,9 @@
 	
 	<update id="upAccountStatus">
 	
-		update accounts set account_status= '2'  where  account_status='1' 
+		update accounts set account_status= '2'  where  account_status='1' and
+		
+		 account_end&lt;=now()
 		 
 	</update>
 </mapper>

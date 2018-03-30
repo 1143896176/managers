@@ -9,8 +9,6 @@
 	</select>
 	
 	<insert id="adminBill">
-	
-		
 		insert into billiards(origin,price,location)
 			values(#{origin},#{price},#{location})
 	</insert>

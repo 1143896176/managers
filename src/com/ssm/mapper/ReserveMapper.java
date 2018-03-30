@@ -39,7 +39,7 @@ public interface ReserveMapper {
 
 	public int beginUse(Integer billiard,String user_name);
 	
-	public int MembeginUse(Integer billiard,String member_tel);
+	public int MembeginUse(Integer billiard,String member_id);
 	
 	public String getMem_name(String member_id);
 	

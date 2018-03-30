@@ -102,9 +102,8 @@ public class AdminServiceImpl implements AdminService {
 		return adminMapper.getMemUseinfo();
 	}
 	@Override
-	public List<Accounts> getAccounts(String member_tel, String YYYY,
-			String MM, String DD) {
-		String date = getDate(YYYY,MM,DD);
+	public List<Accounts> getAccounts(String member_tel, String date) {
+		
 		
 		// TODO Auto-generated method stub
 		return adminMapper.getAccounts(date,member_tel);
@@ -146,10 +145,9 @@ public class AdminServiceImpl implements AdminService {
 		return adminMapper.deleteById(items);
 	}
 	@Override
-	public List<Accounts> getAccountsBybillid(String member_tel, String YYYY,
-			String MM, String DD, Integer billiard_id) {
+	public List<Accounts> getAccountsBybillid(String member_tel, String date, Integer billiard_id) {
 		// TODO Auto-generated method stub
-		String date = getDate(YYYY,MM,DD);
+		
 		return adminMapper.getAccountsBybillid(date, billiard_id,member_tel);
 	}
 

@@ -67,17 +67,15 @@
 	
 	<insert id="beginUse">
 	
-			insert into useinfo(use_id,billard_id,use_start,user_name) values
+			insert into useinfo(billard_id,use_start,user_name) values
 			
-			(#{use_id},#{0},now(),#{1})
+			(#{0},now(),#{1})
 	
 	</insert>
 	
 	<insert id="MembeginUse">
 	
-			insert into accounts(account_id,billiard_id,account_start,member_id,account_status) values
-			
-			(#{account_id},#{0},now(),#{1},0)
+insert into accounts(billiard_id,account_start,member_id,account_status) values	( #{0},now(),#{1},0)
 	
 	</insert>
 	
@@ -96,9 +94,9 @@
 	
 	<insert id="insertAccount">
 	
-		insert into accounts(account_id,member_id,billiard_id,account_start,account_end,duration,price,account_status)
+		insert into accounts(member_id,billiard_id,account_start,account_end,duration,price,account_status)
 		
-		values(#{account_id},#{user_name},#{billard_id},#{account_start},
+		values(#{user_name},#{billard_id},#{account_start},
 		
 		now(),#{duration},#{price},3)
 	</insert>
@@ -106,13 +104,12 @@
 	
 	<select id="getUseruse" resultType="Useinfo">
 	
-		select u.use_id,u.billard_id,u.use_start,u.user_name,b.price from 
+	
+            select u.use_id,u.billard_id,u.use_start,u.user_name,b.price from 
   
   			(select * from useinfo  where use_status = '1' 
       
-           and use_start &lt; now())u
-      
-           left join billiards b
+           and use_start &lt;now() )u left join billiards b
       
            on u.billard_id = b.billiard_id
       
@@ -122,8 +119,7 @@
 	
 	
 	
-	<resultMap type="Members" id="membersResult">
-    
+<resultMap type="Members" id="membersResult">
     <result property="balance" column="balance"/>
     <result property="grade" column="grade"/>
 </resultMap>
@@ -187,7 +183,7 @@
 
            where account_status='0' and
 
-            account_start &lt;now()c
+            account_start &lt;now())c
 
              where c.account_id = #{account_id}
 
@@ -212,8 +208,7 @@
           FROM (SELECT * FROM Reserve
          where reserve_status = #{reserve_status}
 		
-		) A
-          
+		) A 
 
 )B
 

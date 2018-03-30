@@ -290,8 +290,8 @@ public class AdminController {
 		
 		
 		@RequestMapping(value="adminAccounts")
-		public String adminAccounts(String member_tel,String YYYY,String MM,String DD,Model model,HttpSession session){
-			List<Accounts> list =adminService.getAccounts(member_tel, YYYY, MM, DD);
+		public String adminAccounts(String member_tel,String date,Model model,HttpSession session){
+			List<Accounts> list =adminService.getAccounts(member_tel, date);
 		
 			if(list!=null && list.size()>0){
 				model.addAttribute("accounts_list",list);
@@ -301,13 +301,11 @@ public class AdminController {
 			else{
 				model.addAttribute("message", "没有此信息");
 			}
-			model.addAttribute("YYYY", YYYY);
-			model.addAttribute("MM", MM);
-			model.addAttribute("DD", DD);
+			model.addAttribute("date", date);
 			
-			session.setAttribute("yyyy", YYYY);
-			session.setAttribute("mm", MM);
-			session.setAttribute("dd", DD);
+			
+			session.setAttribute("date", date);
+			
 			session.setAttribute("membertel", member_tel);
 			
 				return "account";
@@ -335,7 +333,7 @@ public class AdminController {
 			}
 			
 			
-			List<Accounts> list = adminService.getAccountsBybillid(member_tel, YYYY, MM, DD, billiard) ;
+			List<Accounts> list = adminService.getAccountsBybillid(member_tel, DD, billiard) ;
 			if(list!=null && list.size()>0){
 			
 					model.addAttribute("account_list", list);
